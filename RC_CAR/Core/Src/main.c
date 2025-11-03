@@ -71,8 +71,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     // UART1 (휴대폰)에서 수신된 경우
     if(huart->Instance == USART1)       //USART1 과 연결된 블루투스 의 들어올시 동작
     {
-        // 받은 데이터를 UART2 로 전달
-        HAL_UART_Transmit(&huart2, &rxData, 1, 100);    //받은 데이터 huart2에서 출력Tx (rxData데이터를)
+
 
         //자동차 제어
         if(rxData == 'S')       //자동차 정지
@@ -82,21 +81,21 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
               HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);       //IN3, 1
               HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);        //IN4, 1
         }
-        else if(rxData == 'F')  //자동차 전진
+        else if(rxData == 'B')  //자동차 후진
         {
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);       //IN1, 1
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);     //IN2, 0
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);       //IN3, 1
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);      //IN4, 0
         }
-        else if(rxData == 'B')  //자동차 후진
+        else if(rxData == 'F')  //자동차 전진
         {
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);   //IN1, 0
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);     //IN2, 1
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);   //IN3, 0
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);      //IN4, 1
         }
-        else if(rxData == 'L')  //자동차 좌회전
+        else if(rxData == 'R')  //자동차 우회전
         {
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13,GPIO_PIN_RESET );    //IN1, 0
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);       //IN2, 1
@@ -104,7 +103,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);     //IN4, 0
 
         }
-        else if(rxData == 'R')  // 자동차 우회전
+        else if(rxData == 'L')  // 자동차 좌회전
         {
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);       //IN1, 1
                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);     //IN2, 0
@@ -115,58 +114,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         // 다음 데이터 수신 준비 (DMA)
         HAL_UART_Receive_DMA(&huart1, &rxData, 1);
     }
-
-    // UART2에서 수신된 경우 (필요한 경우만 사용)(컴퓨터 수신)
-    else if(huart->Instance == USART2)
-    {
-        // 예: echo back to PC
-       // 받은 데이터를 UART2 로 전달
-        HAL_UART_Transmit(&huart2, &rxData, 1, 100);
-        // 받은 데이터를 UART1 로 전달
-        HAL_UART_Transmit(&huart1, &rxData, 1, 100);
-        HAL_UART_Receive_IT(&huart2, &rxData, 1); // 계속 수신
-
-
-
-        //자동차 제어
-        if(rxData == 'S')       //자동차 정지
-        {
-               HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);       //IN1, 1
-               HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);       //IN2, 1
-               HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);       //IN3, 1
-               HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);        //IN4, 1
-        }
-        else if(rxData == 'F')  //자동차 전진
-        {
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);       //IN1, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);     //IN2, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);       //IN3, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);      //IN4, 0
-        }
-        else if(rxData == 'B')  //자동차 후진
-        {
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);   //IN1, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);     //IN2, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);   //IN3, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);      //IN4, 1
-        }
-        else if(rxData == 'L')  //자동차 좌회전
-        {
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13,GPIO_PIN_RESET );    //IN1, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);       //IN2, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15,GPIO_PIN_SET);       //IN3, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);     //IN4, 0
-
-        }
-        else if(rxData == 'R')  // 자동차 우회전
-        {
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);       //IN1, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);     //IN2, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);     //IN3, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);        //IN4, 1
-        }
-    }
 }
+
 
 
 
@@ -208,25 +157,18 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART1_UART_Init();
-  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
   // PWM 시작 (속도 제어)
 
 
     HAL_UART_Receive_DMA(&huart1, &rxData, 1);  // 휴대폰에서 DMA 방식으로 수신
-    HAL_UART_Receive_IT(&huart2, &rxData, 1);   // PC에서 인터럽트 방식 수신
-//  char msg[] = "AT+NAMEswp\r\n";
-//  HAL_UART_Transmit(&huart1, msg, sizeof(msg)  , HAL_MAX_DELAY);
 
 
-//  // === 전원 인가 시 전진 테스트 ===
-//  MotorA_Control(1000, 1);   // 왼쪽 모터 전진
-//  MotorB_Control(1000, 1);   // 오른쪽 모터 전진
-//  HAL_Delay(3000);            // 3초간 전진
-//  MotorA_Control(0, -1);      // 정지
-//  MotorB_Control(0, -1);
-//  HAL_Delay(1000);            // 잠시 대기
+    char msg[] = "AT+NAMEswp\r\n";
+    HAL_UART_Transmit(&huart1, msg, sizeof(msg)  , HAL_MAX_DELAY);
+
+
 
 
 
@@ -236,102 +178,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-    //IN1, IN2
-        //LOW  LOW         전원연결x
-        //LOW  HIGH        역방향
-        //HIGH LOW         정방향
-        //HIGH HIGH        브레이크
-
-
-        //휴대폰 블루투스 연결 LEDON OFF제어
-        if(rxData == 'S')       //자동차 정지
-        {
-           HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);       //IN1, 1
-           HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);       //IN2, 1
-           HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);       //IN3, 1
-           HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);        //IN4, 1
-        }
-        else if(rxData == 'F')  //자동차 전진
-        {
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);       //IN1, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);     //IN2, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);       //IN3, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);      //IN4, 0
-        }
-        else if(rxData == 'B')  //자동차 후진
-        {
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);   //IN1, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);     //IN2, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);   //IN3, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);      //IN4, 1
-        }
-        else if(rxData == 'L')  //자동차 좌회전
-        {
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13,GPIO_PIN_RESET );    //IN1, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14,GPIO_PIN_SET);       //IN2, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15,GPIO_PIN_SET);       //IN3, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);     //IN4, 0
-
-        }
-        else if(rxData == 'R')  // 자동차 우회전
-        {
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);       //IN1, 1
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);     //IN2, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);     //IN3, 0
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);        //IN4, 1
-        }
-        HAL_UART_Receive_IT(&huart1, &rxData, 1);
-
-
-
-
-    // === 전원 인가 시 전진 테스트 ===
-    //전,진코드
-
-
-//
-//#define IN1_Pin GPIO_PIN_13   //IN1
-//#define IN1_GPIO_Port GPIOB
-//
-//#define IN2_Pin GPIO_PIN_14   //IN2
-//#define IN2_GPIO_Port GPIOB
-//
-//#define IN3_Pin GPIO_PIN_15   //IN3
-//#define IN3_GPIO_Port GPIOB
-//
-//#define IN4_Pin GPIO_PIN_1   //IN4
-//#define IN4_GPIO_Port GPIOB
-
-
-////    // 수신된 명령에 따라 동작
-//    switch (rxData)
-//    {
-//    case 'w': // 전진
-//        MotorA_Control(1000, 1);
-//        MotorB_Control(1000, 1);
-//        break;
-//    case 's': // 후진
-//        MotorA_Control(1000, 0);
-//        MotorB_Control(1000, 0);
-//        break;
-//    case 'a': // 좌회전
-//        MotorA_Control(700, 0);
-//        MotorB_Control(700, 1);
-//        break;
-//    case 'd': // 우회전
-//        MotorA_Control(700, 1);
-//        MotorB_Control(700, 0);
-//        break;
-//    case 'c': // 정지
-//    default:
-//        MotorA_Control(0, -1);
-//        MotorB_Control(0, -1);
-//        break;
-//
-//
-//        }
-
 
     /* USER CODE END WHILE */
 
